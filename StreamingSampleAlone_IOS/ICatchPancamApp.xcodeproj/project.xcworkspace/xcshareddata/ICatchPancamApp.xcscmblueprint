@@ -1,0 +1,44 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "8E6E153878ACF882BA6F8F5463BB3FAB83A2E431",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "57F93179C86D86D24B466419EDD085C42B2C365C" : 9223372036854775807,
+    "8E6E153878ACF882BA6F8F5463BB3FAB83A2E431" : 9223372036854775807,
+    "5BE50B294E76AAC0E63BAA1CD4DD2F28E7D38497" : 9223372036854775807,
+    "03B814F47CF6A7CA3DB7F9CB73DD53A03BDCB415" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "487FBB60-1E4C-4D18-AE3D-B9C0CD8631E3",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "57F93179C86D86D24B466419EDD085C42B2C365C" : "..\/pancamsdk\/PancamSDK",
+    "8E6E153878ACF882BA6F8F5463BB3FAB83A2E431" : "App\/",
+    "5BE50B294E76AAC0E63BAA1CD4DD2F28E7D38497" : "..\/pancamsdk\/PhoenixSDK",
+    "03B814F47CF6A7CA3DB7F9CB73DD53A03BDCB415" : "..\/wificamsdk"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "ICatchPancamApp",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "ICatchPancamApp.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "ssh:\/\/peng.tan@172.28.28.19:29418\/icatchtek_wificamsdk.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "03B814F47CF6A7CA3DB7F9CB73DD53A03BDCB415"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "ssh:\/\/peng.tan@172.28.28.19:29418\/ICatchtek\/App.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "57F93179C86D86D24B466419EDD085C42B2C365C"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "ssh:\/\/peng.tan@172.28.28.37:29418\/Phoenix_library.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "5BE50B294E76AAC0E63BAA1CD4DD2F28E7D38497"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "ssh:\/\/peng.tan@172.28.28.19:29418\/ICatchtek\/App.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "8E6E153878ACF882BA6F8F5463BB3FAB83A2E431"
+    }
+  ]
+}
