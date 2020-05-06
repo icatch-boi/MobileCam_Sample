@@ -245,7 +245,7 @@ atomic<int> sessionID(1); // for multi-session app, the sessionID should not be 
     int ret = surfaceContext->setup();
     NSLog(@"setupGL with surfaceContext: %p, ret %d\n", surfaceContext.get(), ret);
 
-    /* No gl related work done, we start the stream. */.    
+    /* No gl related work done, we start the stream. */
     auto streamParam = make_shared<ICatchH264StreamParam>();
     pancamPreview->start(streamParam, false);
     streamingrun = true;
