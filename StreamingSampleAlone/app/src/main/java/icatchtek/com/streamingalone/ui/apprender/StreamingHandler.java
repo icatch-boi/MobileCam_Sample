@@ -1,10 +1,10 @@
 package icatchtek.com.streamingalone.ui.apprender;
 
-import android.graphics.Rect;
 import android.util.Log;
-import android.view.SurfaceView;
 
+import com.icatchtek.pancam.customer.ICatchIPancamImage;
 import com.icatchtek.pancam.customer.stream.ICatchIStreamProvider;
+import com.icatchtek.pancam.customer.surface.ICatchISurfaceContext;
 import com.icatchtek.reliant.customer.exception.IchNotSupportedException;
 import com.icatchtek.reliant.customer.exception.IchTryAgainException;
 import com.icatchtek.reliant.customer.type.ICatchAudioFormat;
@@ -12,20 +12,18 @@ import com.icatchtek.reliant.customer.type.ICatchCodec;
 import com.icatchtek.reliant.customer.type.ICatchFrameBuffer;
 import com.icatchtek.reliant.customer.type.ICatchVideoFormat;
 
-import icatchtek.com.streamingalone.render.core.AppRenderH264;
-import icatchtek.com.streamingalone.render.core.AppRenderPCMA;
-import icatchtek.com.streamingalone.render.core.AppRenderRGBA;
 import icatchtek.com.streamingalone.render.AudioAppRender;
-import icatchtek.com.streamingalone.render.VideoAppRender;
+import icatchtek.com.streamingalone.render.VideoSDKRender;
+import icatchtek.com.streamingalone.render.core.AppRenderPCMA;
+import icatchtek.com.streamingalone.render.core.SDKRenderRGBA;
 
 public class StreamingHandler
 {
-    private SurfaceView surfaceView;
     private ICatchIStreamProvider streamProvider;
 
     private boolean videoRun;
     private Thread videoThread;
-    private VideoAppRender videoRender;
+    private VideoSDKRender videoRender;
 
     private boolean audioRun;
     private Thread audioThread;
@@ -37,12 +35,7 @@ public class StreamingHandler
         this.streamProvider = streamProvider;
     }
 
-    public void setSurfaceView(SurfaceView surfaceView)
-    {
-        this.surfaceView = surfaceView;
-    }
-
-    public boolean start()
+    public boolean start(ICatchISurfaceContext surfaceContext, ICatchIPancamImage pancamImage)
     {
         if (this.videoRun || this.audioRun) {
             return true;
@@ -52,15 +45,9 @@ public class StreamingHandler
             if (this.streamProvider.containsVideoStream()) {
                 ICatchVideoFormat videoFormat = this.streamProvider.getVideoFormat();
                 if (videoFormat != null) {
-                    if (videoFormat.getCodec() == ICatchCodec.ICH_CODEC_H264) {
-                        AppRenderH264 renderH264 = new AppRenderH264(surfaceView.getHolder());
-                        renderH264.setFormat(videoFormat);
-                        this.videoRender = renderH264;
-                    }
-                    else if (videoFormat.getCodec() == ICatchCodec.ICH_CODEC_RGBA_8888) {
-                        Rect drawRect = new Rect(0, 0, surfaceView.getWidth(), surfaceView.getHeight());
-                        AppRenderRGBA renderRGBA = new AppRenderRGBA(surfaceView.getHolder(), drawRect);
-                        renderRGBA.setFormat(videoFormat.getVideoW(), videoFormat.getVideoH());
+                    if (videoFormat.getCodec() == ICatchCodec.ICH_CODEC_RGBA_8888) {
+                        SDKRenderRGBA renderRGBA = new SDKRenderRGBA(surfaceContext, pancamImage);
+                        renderRGBA.setFormat(videoFormat.getCodec(), videoFormat.getVideoW(), videoFormat.getVideoH());
                         this.videoRender = renderRGBA;
                     }
                     else {
@@ -74,11 +61,11 @@ public class StreamingHandler
                 }
             }
             else {
-                Log.i("__app_render__", "No video stream found");
+                Log.i("__sdk_render__", "No video stream found");
             }
         }
         catch (Exception ex) {
-            Log.i("__app_render__", "-----------------------------3");
+            Log.i("__sdk_render__", "-----------------------------3");
             ex.printStackTrace();
         }
 
@@ -99,24 +86,24 @@ public class StreamingHandler
                 }
             }
             else {
-                Log.i("__app_render__", "No audio stream found");
+                Log.i("__sdk_render__", "No audio stream found");
             }
         }
         catch (Exception ex) {
             ex.printStackTrace();
         }
-        Log.i("__app_render__", "-----------------------------Z");
+        Log.i("__sdk_render__", "-----------------------------Z");
         return true;
     }
 
     public boolean stop()
     {
-        Log.i("__app_render__", "-----------------------------B");
+        Log.i("__sdk_render__", "-----------------------------B");
         if (!this.videoRun && !this.audioRun) {
             return true;
         }
 
-        Log.i("__app_render__", "-----------------------------C");
+        Log.i("__sdk_render__", "-----------------------------C");
         this.videoRun = false;
         if (this.videoThread != null) {
             try {
@@ -153,10 +140,10 @@ public class StreamingHandler
         {
             ICatchFrameBuffer frameBuffer = new ICatchFrameBuffer(2880 * 1440 * 4);
 
-            Log.i("__app_render_video__", "do rendering");
+            Log.i("__sdk_render_video__", "do rendering");
             while (videoRun) {
 
-                Log.i("__app_render_video__", "get next Frame");
+                Log.i("__sdk_render_video__", "get next Frame");
                 boolean retVal = false;
                 try {
                     retVal = streamProvider.getNextVideoFrame(frameBuffer);
@@ -168,14 +155,14 @@ public class StreamingHandler
                     break;
                 }
                 if (!retVal || frameBuffer.getFrameSize() <= 0) {
-                    Log.i("__app_render_video__", "failed, frameSize: " + frameBuffer.getFrameSize());
+                    Log.i("__sdk_render_video__", "failed, frameSize: " + frameBuffer.getFrameSize());
                     break;
                 }
 
-                Log.i("__app_render_video__", "try to render, frameSize: " + frameBuffer.getFrameSize());
+                Log.i("__sdk_render_video__", "try to render, frameSize: " + frameBuffer.getFrameSize());
                 videoRender.renderFrame(frameBuffer);
             }
-            Log.i("__app_render_video__", "quit render thread");
+            Log.i("__sdk_render_video__", "quit render thread");
         }
     }
 
@@ -186,10 +173,10 @@ public class StreamingHandler
 
             ICatchFrameBuffer frameBuffer = new ICatchFrameBuffer(10240);
 
-            Log.i("__app_render_pcma__", "do rendering");
+            Log.i("__sdk_render_pcma__", "do rendering");
             while (videoRun) {
 
-                Log.i("__app_render_pcma__", "get next Frame");
+                Log.i("__sdk_render_pcma__", "get next Frame");
                 boolean retVal = false;
                 try {
                     retVal = streamProvider.getNextAudioFrame(frameBuffer);
@@ -207,14 +194,14 @@ public class StreamingHandler
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    Log.i("__app_render_pcma__", "break, frameSize: " + frameBuffer.getFrameSize());
+                    Log.i("__sdk_render_pcma__", "break, frameSize: " + frameBuffer.getFrameSize());
                     break;
                 }
 
-                Log.i("__app_render_pcma__", "try to render, frameSize: " + frameBuffer.getFrameSize());
+                Log.i("__sdk_render_pcma__", "try to render, frameSize: " + frameBuffer.getFrameSize());
                 audioRender.renderFrame(frameBuffer);
             }
-            Log.i("__app_render_pcma__", "quit render thread");
+            Log.i("__sdk_render_pcma__", "quit render thread");
         }
     }
 }

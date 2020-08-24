@@ -2,4 +2,11 @@
     <string name="app_name">StreamingSampleAlone</string>
     <string name="start_stream">start stream</string>
     <string name="stop_stream">stop stream</string>
+    <string name="exuCmdSet">ExuCmdSet</string>
+    <string name="exuCmdGet">ExuCmdGet</string>
+    <string name="request_permission">request permission</string>
+    <string name="app_render">App Render</string>
+    <string name="sdk_render">SDK Render</string>
+    <string name="sdk_render_over_usb">SDK Render Over Usb</string>
+    <string name="PreviewActivity">PreviewActivity</string>
 </resources>
