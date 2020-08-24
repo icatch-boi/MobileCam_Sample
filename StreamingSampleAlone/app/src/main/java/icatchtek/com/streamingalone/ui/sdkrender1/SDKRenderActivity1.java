@@ -25,31 +25,40 @@
 
 package icatchtek.com.streamingalone.ui.sdkrender1;
 
-import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.view.SurfaceView;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import com.icatchtek.pancam.customer.ICatchIPancamPreview;
 import com.icatchtek.pancam.customer.ICatchPancamSession;
-import com.icatchtek.pancam.customer.surface.ICatchISurfaceContext;
-import com.icatchtek.pancam.customer.surface.ICatchSurfaceContext;
 import com.icatchtek.pancam.customer.type.ICatchGLColor;
 import com.icatchtek.pancam.customer.type.ICatchGLDisplayPPI;
 import com.icatchtek.reliant.customer.exception.IchInvalidSessionException;
 import com.icatchtek.reliant.customer.exception.IchTransportException;
 import com.icatchtek.reliant.customer.transport.ICatchINETTransport;
 import com.icatchtek.reliant.customer.transport.ICatchITransport;
+import com.icatchtek.reliant.customer.type.ICatchH264StreamParam;
+import com.icatchtek.reliant.customer.type.ICatchStreamParam;
 
 import icatchtek.com.streamingalone.R;
+import icatchtek.com.streamingalone.ui.BaseSurfaceActivity;
 
-public class SDKRenderActivity1 extends Activity
+public class SDKRenderActivity1 extends BaseSurfaceActivity
 {
     private ICatchITransport transport;
     protected ICatchPancamSession pancamSession;
 
     private ICatchIPancamPreview preview;
+    private boolean renderReady = false;
+
+    @Override
+    protected void setContentViewWhichHasSurfaceView1()
+    {
+        setContentView(R.layout.activity_render);
+    }
 
     //----------------------------------------------------------------------------------------------
     /* Override activity's lifecycle methods. */
@@ -58,8 +67,6 @@ public class SDKRenderActivity1 extends Activity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_render);
 
         /* ------step 1------------------------*/
         /* create and prepare transport */
@@ -92,21 +99,48 @@ public class SDKRenderActivity1 extends Activity
             System.exit(-1);
         }
 
-        /* ------step 3------------------------*/
-        /* decide to use sdk render */
-        /* ------step 3------------------------*/
-        try {
-            SurfaceView surfaceView = findViewById(R.id.surfaceView1);
-            ICatchISurfaceContext surfaceContext = new ICatchSurfaceContext(surfaceView.getHolder().getSurface());
-            boolean retVal = this.preview.enableRender(surfaceContext);
-            if (!retVal) {
-                System.exit(-1);
+        /* The step 3 please refers to prepareRender() method, The surfaceView's operations must waiting The SurfaceView component ready */
+
+        /* ------step 4------------------------*/
+        /* start/stop streaming after each onclick event triggered */
+        /* ------step 4------------------------*/
+        Button btn_start_stream = findViewById(R.id.start_stream);
+        btn_start_stream.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /* prepare render if needed, only need to do once */
+                if (!renderReady) {
+                    prepareRender();
+                    renderReady = true;
+                }
+                /* create stream parameter & use it as parameter to start stream */
+                try {
+                    ICatchStreamParam param = new ICatchH264StreamParam();
+                    boolean retVal = preview.start(param);
+                    if (!retVal) {
+                        Log.i("__render__", "start stream failed, retVal false ");
+                    }
+                }
+                catch(Exception ex) {
+                    ex.printStackTrace();
+                    Log.i("__render__", "start stream failed: " + ex.getMessage());
+                }
             }
-        }
-        catch(Exception ex)
-        {
-            ex.printStackTrace();
-        }
+        });
+
+        Button btn_stop_stream = findViewById(R.id.stop_stream);
+        btn_stop_stream.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /* stop grab frame & render process */
+                try {
+                    preview.stop();
+                }
+                catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
@@ -140,5 +174,33 @@ public class SDKRenderActivity1 extends Activity
         } catch (IchTransportException e) {
             e.printStackTrace();
         }
+    }
+
+    private void prepareRender()
+    {
+        /* ------step 3------------------------*/
+        /* decide to use app render, get an instance of ICatchIStreamProvider' object */
+        /* ------step 3------------------------*/
+        try {
+            /* disable render, create streaming provider(app instance) */
+            boolean retVal = this.preview.enableRender(surfaceContext);
+            Log.i("__render__", "call enable render method retVal: " + retVal);
+        }
+        catch(Exception ex)
+        {
+            ex.printStackTrace();
+            Log.i("__render__", "call disable render method failed: " + ex.getMessage());
+            System.exit(-1);
+        }
+    }
+
+    protected void surfaceViewAvailableNotify()
+    {
+        Log.i("__render__", "surfaceViewAvailableNotify");
+    }
+
+    protected void surfaceViewUnavailableNotify()
+    {
+        Log.i("__render__", "surfaceViewUnavailableNotify");
     }
 }
