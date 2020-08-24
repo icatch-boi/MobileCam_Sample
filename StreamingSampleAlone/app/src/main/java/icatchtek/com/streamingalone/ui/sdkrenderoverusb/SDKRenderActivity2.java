@@ -1,13 +1,11 @@
 package icatchtek.com.streamingalone.ui.sdkrenderoverusb;
 
-import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 
@@ -18,7 +16,6 @@ import com.icatchtek.control.customer.type.ICatchCamLogLevel;
 import com.icatchtek.control.customer.type.ICatchCamLogType;
 import com.icatchtek.pancam.customer.ICatchIPancamPreview;
 import com.icatchtek.pancam.customer.ICatchPancamSession;
-import com.icatchtek.pancam.customer.surface.ICatchSurfaceContext;
 import com.icatchtek.pancam.customer.type.ICatchGLColor;
 import com.icatchtek.pancam.customer.type.ICatchGLDisplayPPI;
 import com.icatchtek.reliant.customer.exception.IchInvalidSessionException;
@@ -140,6 +137,7 @@ public class SDKRenderActivity2 extends BaseSurfaceActivity
         btn_start_stream.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                /* prepare render if needed, only need to do once */
                 if (!renderReady) {
                     prepareRender();
                     renderReady = true;

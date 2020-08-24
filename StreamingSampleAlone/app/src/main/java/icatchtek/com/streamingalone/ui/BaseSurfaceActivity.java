@@ -27,17 +27,11 @@ package icatchtek.com.streamingalone.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.LinearLayout;
-
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.icatchtek.pancam.customer.exception.IchGLSurfaceNotSetException;
 import com.icatchtek.pancam.customer.surface.ICatchISurfaceContext;
 import com.icatchtek.pancam.customer.surface.ICatchSurfaceContext;
-import com.icatchtek.pancam.customer.type.ICatchGLSurfaceType;
 
 import icatchtek.com.streamingalone.R;
 
@@ -45,8 +39,17 @@ public abstract class BaseSurfaceActivity extends Activity
 {
     protected ICatchISurfaceContext surfaceContext;
 
+    /**
+     * The sub class should provide a layout file contains SurfaceView component named surfaceView1
+     */
     protected abstract void setContentViewWhichHasSurfaceView1();
+    /**
+     * The surfaceView available notify, The SDK/App methods which needs this surface will work well now.
+     */
     protected abstract void surfaceViewAvailableNotify();
+    /**
+     * The surfaceView unavailable notify, The SDK/App methods which needs this surface will not work well now.
+     */
     protected abstract void surfaceViewUnavailableNotify();
 
     @Override
