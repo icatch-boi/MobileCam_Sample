@@ -8,5 +8,7 @@
     - [About Samples when using the usb transport]
       - The UI Operations: **SDK Render Over USB**(The main activity) --> **Request Permission --> PreviewActivity**(The premission activity) --> then enter the main preview activity.
       - For this sample, you need to modify the Vendor ID and Product ID in order to match your devices settings, You will get this from the iCatchtek inc.
-      - Two basic rools will be helpful to understand this code, if your app want to access the usb device, your app must have permission to access such device. if you want to render pictures to the surface, you should wait the surface ready before doing it.
+      - Two basic rules will be helpful to understand this code, if your app want to access the usb device, your app must have permission to access such device. if you want to render pictures to the surface, you should wait the surface ready before doing it.
       - The related files&codes located at package **icatchtek.com.streamingalone.ui.sdkrenderoverusb**
+      - Some customized systems have additional permissions processing. If you forget to grant the corresponding permissions during installation, you can also manage the permissions through the corresponding system App. For example, miui11 can grant file access, recording, etc. permissions through its system housekeeper app.
+      
