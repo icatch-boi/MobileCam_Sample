@@ -40,8 +40,6 @@ import icatchtek.com.streamingalone.ui.sdkrenderoverusb.usb.USBHost_Feature;
 
 public class SDKRenderActivity2 extends BaseSurfaceActivity
 {
-    public static int __USB_TYPE__  = MainActivityAttributes.USB_TYPE_BULK;
-
     private USBHost_Feature feature;
 
     private ICatchITransport transport;
@@ -68,6 +66,7 @@ public class SDKRenderActivity2 extends BaseSurfaceActivity
 
         /* receive information from parent activity */
         Intent intent = getIntent();
+        int usbType = intent.getIntExtra("usbType", MainActivityAttributes.USB_TYPE_BULK);
         int vendorID = intent.getIntExtra("vendorID", USBHost_Feature.USB_VENDOR_ID);
         int productID = intent.getIntExtra("productID", USBHost_Feature.USB_PRODUCT_ID);
 
@@ -86,7 +85,7 @@ public class SDKRenderActivity2 extends BaseSurfaceActivity
         /* create and prepare transport */
         /* ------step 1------------------------*/
         try {
-            switch (__USB_TYPE__) {
+            switch (usbType) {
                 case MainActivityAttributes.USB_TYPE_ISO:
                     this.transport = new ICatchUVCIsoTransport(vendorID, productID, this.feature.getFileDescriptor());
                     break;

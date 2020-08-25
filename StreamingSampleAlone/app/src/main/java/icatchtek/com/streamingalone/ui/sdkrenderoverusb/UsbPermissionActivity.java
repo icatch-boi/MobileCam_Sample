@@ -21,9 +21,11 @@ import java.util.Map;
 import icatchtek.com.streamingalone.R;
 import icatchtek.com.streamingalone.ui.sdkrenderoverusb.usb.NotificationHandler;
 import icatchtek.com.streamingalone.ui.sdkrenderoverusb.usb.USBHost_Feature;
+import icatchtek.com.streamingalone.ui.sdkrenderoverusb.usb.MainActivityAttributes;
 
 public class UsbPermissionActivity extends Activity
 {
+    private int usbType;
     private Spinner spDevices;
     private Map<String, UsbDevice> usbDeviceMap = new HashMap<>();
 
@@ -62,6 +64,26 @@ public class UsbPermissionActivity extends Activity
             }
         });
 
+        Spinner spUSBType = (Spinner)findViewById(R.id.sp_usb_type);
+        spUSBType.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
+
+            public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                String content = arg0.getItemAtPosition(arg2).toString();
+                if (content.equals(MainActivityAttributes.USB_TYPE_ISO_KEY)) {
+                    usbType = MainActivityAttributes.USB_TYPE_ISO;
+                }
+                if (content.equals(MainActivityAttributes.USB_TYPE_BULK_KEY)) {
+                    usbType = MainActivityAttributes.USB_TYPE_BULK;
+                }
+            }
+
+            public void onNothingSelected(AdapterView<?> arg0) {
+                usbType = MainActivityAttributes.USB_TYPE_ISO;
+
+            }
+        });
+        spUSBType.setSelection(1);
+
         /* ------------------------------------*/
         /* The usb related operations */
         /* ------------------------------------*/
@@ -78,6 +100,7 @@ public class UsbPermissionActivity extends Activity
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent();
+                intent.putExtra("usbType", usbType);
                 intent.putExtra("vendorID", feature.getVendorID());
                 intent.putExtra("productID", feature.getProductID());
                 intent.setClass(UsbPermissionActivity.this, SDKRenderActivity2.class);

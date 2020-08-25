@@ -12,6 +12,12 @@
         android:layout_alignParentBottom="true"
         android:orientation="vertical">
         <Spinner
+            android:id="@+id/sp_usb_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/spingarr_usb_type"
+            />
+        <Spinner
             android:id="@+id/sp_devices"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

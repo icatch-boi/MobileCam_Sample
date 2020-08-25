@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="spingarr_usb_type">
+        <item>USB ISO</item>
+        <item>USB BULK</item>
+    </string-array>
+</resources>
