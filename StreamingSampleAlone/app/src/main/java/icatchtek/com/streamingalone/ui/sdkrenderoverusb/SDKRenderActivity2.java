@@ -1,5 +1,6 @@
 package icatchtek.com.streamingalone.ui.sdkrenderoverusb;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Environment;
@@ -8,6 +9,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.icatchtek.control.customer.ICatchCameraLog;
 import com.icatchtek.control.customer.ICatchCameraProperty;
@@ -28,6 +30,8 @@ import com.icatchtek.reliant.customer.transport.ICatchUsbTransportLog;
 import com.icatchtek.reliant.customer.type.ICatchH264StreamParam;
 import com.icatchtek.reliant.customer.type.ICatchStreamParam;
 
+import java.util.Locale;
+
 import icatchtek.com.streamingalone.R;
 import icatchtek.com.streamingalone.ui.BaseSurfaceActivity;
 import icatchtek.com.streamingalone.ui.sdkrenderoverusb.usb.MainActivityAttributes;
@@ -37,8 +41,6 @@ import icatchtek.com.streamingalone.ui.sdkrenderoverusb.usb.USBHost_Feature;
 public class SDKRenderActivity2 extends BaseSurfaceActivity
 {
     public static int __USB_TYPE__  = MainActivityAttributes.USB_TYPE_BULK;
-    public static int __VENDOR_ID__ = USBHost_Feature.USB_VENDOR_ID;
-    public static int __PRODUCT_ID  = USBHost_Feature.USB_PRODUCT_ID;
 
     private USBHost_Feature feature;
 
@@ -64,6 +66,11 @@ public class SDKRenderActivity2 extends BaseSurfaceActivity
     {
         super.onCreate(savedInstanceState);
 
+        /* receive information from parent activity */
+        Intent intent = getIntent();
+        int vendorID = intent.getIntExtra("vendorID", USBHost_Feature.USB_VENDOR_ID);
+        int productID = intent.getIntExtra("productID", USBHost_Feature.USB_PRODUCT_ID);
+
         /* init logger first */
         initSDKLogger2();
         String pancamSDKPath = Environment.getExternalStorageDirectory().getPath();
@@ -72,7 +79,7 @@ public class SDKRenderActivity2 extends BaseSurfaceActivity
         /* create feature, set device, register */
         Handler handler = new NotificationHandler(this);
         this.feature = new USBHost_Feature(this, handler);
-        this.feature.setUsbDevice(this, __VENDOR_ID__,  __PRODUCT_ID);
+        this.feature.setUsbDevice(this, vendorID,  productID);
         this.feature.register();
 
         /* ------step 1------------------------*/
@@ -81,7 +88,7 @@ public class SDKRenderActivity2 extends BaseSurfaceActivity
         try {
             switch (__USB_TYPE__) {
                 case MainActivityAttributes.USB_TYPE_ISO:
-                    this.transport = new ICatchUVCIsoTransport(__VENDOR_ID__, __PRODUCT_ID, this.feature.getFileDescriptor());
+                    this.transport = new ICatchUVCIsoTransport(vendorID, productID, this.feature.getFileDescriptor());
                     break;
                 case MainActivityAttributes.USB_TYPE_SCSI:
                     this.transport = new ICatchUsbScsiTransport(this.feature.getUsbDevice(), this.feature.getUsbDeviceConnection());
@@ -179,12 +186,17 @@ public class SDKRenderActivity2 extends BaseSurfaceActivity
             @Override
             public void onClick(View view) {
                 /* The parameters here should be filled with the extended command information you added to the camera, including command type (Set/Get), data format, data length, etc. */
-                int cmdID = 0x0;                  /* your exu cmd's cmd ID */
-                int dataSize = 0x08;              /* your exu cmd's  data size */
+                int cmdID = 0x01;                 /* your exu cmd's cmd ID */
+                int dataSize = 0x02;              /* your exu cmd's  data size */
                 byte[] data = new byte[dataSize]; /* fill the data with the format that the camera can understand. */
 
                 /* a set command */
-                sendExtensionSetCommand(cmdID, data, dataSize);
+                boolean retVal = sendExtensionSetCommand(cmdID, data, dataSize);
+
+                Toast.makeText(SDKRenderActivity2.this, String.format(
+                        Locale.getDefault(),
+                        "extension unit ID set: %d, dataSize: %d, %s", cmdID, dataSize, (retVal ? "true" : "false")),
+                        Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -193,13 +205,18 @@ public class SDKRenderActivity2 extends BaseSurfaceActivity
             @Override
             public void onClick(View view) {
                 /* The parameters here should be filled with the extended command information you added to the camera, including command type (Set/Get), data format, data length, etc. */
-                int cmdID = 0x0;                  /* your exu cmd's cmd ID */
-                int dataSize = 0x08;              /* your exu cmd's  data size */
+                int cmdID = 0x01;                 /* your exu cmd's cmd ID */
+                int dataSize = 0x02;              /* your exu cmd's  data size */
                 byte[] data = new byte[dataSize]; /* fill the data with the format that the camera can understand. */
 
                 /* a get command */
                 dataSize = sendExtensionGetCommand(cmdID, data);
                 Log.i("xx", "dataSize: " + dataSize);
+
+                Toast.makeText(SDKRenderActivity2.this, String.format(
+                        Locale.getDefault(),
+                        "extension unit ID: %d, dataSize: %d, data: %02x %02x", cmdID, dataSize, data[0], data[1]),
+                        Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -302,14 +319,15 @@ public class SDKRenderActivity2 extends BaseSurfaceActivity
         }
     }
 
-    public void sendExtensionSetCommand(int command, byte[] data, int dataSize)
+    public boolean sendExtensionSetCommand(int command, byte[] data, int dataSize)
     {
         try {
-            cameraProperty.setProperty(command, data, dataSize);
+            return cameraProperty.setProperty(command, data, dataSize);
         }
         catch(Exception ex) {
             ex.printStackTrace();
         }
+        return false;
     }
 
     public int sendExtensionGetCommand(int command, byte[] data)
